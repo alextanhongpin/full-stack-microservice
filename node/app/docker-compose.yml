@@ -1,0 +1,10 @@
+version: '2'
+services:
+  microservice:
+    build: .
+    # Unable to scale up if we assign a name
+    # container_name: node-microservice
+    ports:
+    - 8080
+    expose:
+    - 8080
