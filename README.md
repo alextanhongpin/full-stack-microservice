@@ -13,3 +13,4 @@ The goal is to design a working microservice architecture with the following com
 - Caching (Redis/memcache)
 - API Gateway (kong)
 - OpenID connect
+- Sharding/Clustering of storage
