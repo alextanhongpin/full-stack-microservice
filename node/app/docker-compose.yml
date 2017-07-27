@@ -1,10 +1,18 @@
-version: '2'
+version: '3'
 services:
   microservice:
-    build: .
+    # build: .
+    image: alextanhongpin/web
     # Unable to scale up if we assign a name
     # container_name: node-microservice
     ports:
     - 8080
-    expose:
+    # expose: Exposing ports is unnecessary - services on the same network can access each other's containers on any port.
+    # expose:
+    # - 8080
+  visualizer:
+    image: dockersamples/visualizer
+    volumes: 
+    - /var/run/docker.sock:/var/run/docker.sock
+    ports: 
     - 8080
