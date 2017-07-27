@@ -24,3 +24,19 @@ services:
     image: mongo:latest
     ports:
     - 27017
+    # networks:
+    #   mapp:
+  client:
+    # build: .
+    image: alextanhongpin/web-client
+    ports:
+    - 8080
+    links:
+    - microservice
+    depends_on:
+    - microservice
+    environment:
+      SERVICE_URI: http://microservice
+
+# networks:
+#   mapp:

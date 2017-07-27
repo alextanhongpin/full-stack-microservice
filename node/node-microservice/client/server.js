@@ -1,20 +1,19 @@
 const express = require('express')
 const app = express()
-const mongoose = require('mongoose')
+const request = require('request')
 
-mongoose.Promise = global.Promise
-console.log('MONGO_URI=', process.env.MONGO_URI)
-mongoose.connect(process.env.MONGO_URI, {
-  useMongoClient: true
-}).then(() => {
-  console.log('Successfully connect to mongodb')
-}).catch((err) => {
-  console.log(err)
-})
-
-app.get('/*', (req, res) => {
+app.get('/', (req, res) => {
   res.status(200).json({
     message: 'Welcome to node.js app'
+  })
+})
+
+console.log(process.env)
+app.get('/proxy/users', (req, res) => {
+  request(`${process.env.SERVICE_URI}/api/v1/users`, (error, response, body) => {
+    if (!error && response.statusCode === 200) {
+      console.log(res.body)
+    }
   })
 })
 
