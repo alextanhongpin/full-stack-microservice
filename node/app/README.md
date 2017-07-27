@@ -30,4 +30,7 @@ $ docker stack services web
 
 # From the service name, inspect the Ports `published port`
 $ docker service inspect web_visualizer
+
+# Check the service logs
+$ docker service logs web_microservice
 ```

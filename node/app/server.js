@@ -1,5 +1,16 @@
 const express = require('express')
 const app = express()
+const mongoose = require('mongoose')
+
+mongoose.Promise = global.Promise
+console.log('MONGO_URI=', process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+  useMongoClient: true
+}).then(() => {
+  console.log('Successfully connect to mongodb')
+}).catch((err) => {
+  console.log(err)
+})
 
 app.get('/*', (req, res) => {
   res.status(200).json({

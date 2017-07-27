@@ -10,9 +10,17 @@ services:
     # expose: Exposing ports is unnecessary - services on the same network can access each other's containers on any port.
     # expose:
     # - 8080
+    depends_on:
+    - database
+    environment:
+      MONGO_URI: mongodb://database:27017
   visualizer:
     image: dockersamples/visualizer
     volumes: 
     - /var/run/docker.sock:/var/run/docker.sock
     ports: 
     - 8080
+  database:
+    image: mongo:latest
+    ports:
+    - 27017
