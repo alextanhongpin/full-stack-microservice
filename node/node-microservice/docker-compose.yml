@@ -14,22 +14,25 @@ services:
     - database
     environment:
       MONGO_URI: mongodb://database:27017
-    # networks:
-    #   mcapp:
-    #     aliases:
-    #     - food
+    networks:
+      microapp:
+
   visualizer:
     image: dockersamples/visualizer
     volumes: 
     - /var/run/docker.sock:/var/run/docker.sock
     ports: 
     - 8080
+    networks:
+      microapp:
+
   database:
     image: mongo:latest
     ports:
     - 27017
-    # networks:
-    #   mapp:
+    networks:
+      microapp:
+
   client:
     # build: .
     image: alextanhongpin/web-client
@@ -39,6 +42,8 @@ services:
     - microservice
     depends_on:
     - microservice
+    networks:
+      microapp:
 
-# networks:
-#   mcapp:
+networks:
+  microapp:

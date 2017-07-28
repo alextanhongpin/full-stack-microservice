@@ -38,3 +38,19 @@ $ docker service logs web_microservice
 ```bash
 $ docker exec -it 9b9790c6ff86 bash
 ```
+
+Scale microservice
+```bash
+# docker compose
+$ docker-compose scale microservice=3
+
+# docker swarm
+$ docker service scale web_client=2
+```
+
+
+Log 
+```bash
+# docker swarm
+$ docker service logs pcpftr84mlhf
+```

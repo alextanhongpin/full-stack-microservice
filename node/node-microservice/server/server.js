@@ -12,7 +12,9 @@ mongoose.connect(process.env.MONGO_URI, {
   console.log(err)
 })
 
+console.log(process.env)
 app.get('/api/v1/users', (req, res) => {
+  console.log('successyully called')
   res.status(200).json({
     data: [
       {
@@ -23,7 +25,7 @@ app.get('/api/v1/users', (req, res) => {
   })
 })
 
-app.get('/*', (req, res) => {
+app.get('/', (req, res) => {
   res.status(200).json({
     message: 'Welcome to node.js app'
   })
