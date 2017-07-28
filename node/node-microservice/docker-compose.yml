@@ -35,8 +35,6 @@ services:
     - microservice
     depends_on:
     - microservice
-    environment:
-      SERVICE_URI: http://microservice
 
 # networks:
 #   mapp:

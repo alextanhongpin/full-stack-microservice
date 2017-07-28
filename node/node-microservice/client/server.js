@@ -10,7 +10,7 @@ app.get('/', (req, res) => {
 
 console.log(process.env)
 app.get('/proxy/users', (req, res) => {
-  request(`${process.env.SERVICE_URI}/api/v1/users`, (error, response, body) => {
+  request(`http://${process.env.HOSTNAME}/api/v1/users`, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       console.log(res.body)
     }
