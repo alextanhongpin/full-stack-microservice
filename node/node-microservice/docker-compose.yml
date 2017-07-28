@@ -16,6 +16,8 @@ services:
       MONGO_URI: mongodb://database:27017
     networks:
       microapp:
+        aliases:
+        - test
 
   visualizer:
     image: dockersamples/visualizer
