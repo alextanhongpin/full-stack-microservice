@@ -34,3 +34,7 @@ $ docker service inspect web_visualizer
 # Check the service logs
 $ docker service logs web_microservice
 ```
+
+```bash
+$ docker exec -it 9b9790c6ff86 bash
+```

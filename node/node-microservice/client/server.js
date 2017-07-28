@@ -10,9 +10,18 @@ app.get('/', (req, res) => {
 
 console.log(process.env)
 app.get('/proxy/users', (req, res) => {
-  request(`http://${process.env.HOSTNAME}/api/v1/users`, (error, response, body) => {
+  // Without http, it will throw error "Invalid protocol: microservice:"
+  request(`http://microservice:8080/api/v1/users`, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       console.log(res.body)
+      res.status(200).json({
+        ok: true
+      })
+    } else {
+      res.status(400).json({
+        error: true,
+        message: error.message
+      })
     }
   })
 })

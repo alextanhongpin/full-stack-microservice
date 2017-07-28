@@ -14,6 +14,10 @@ services:
     - database
     environment:
       MONGO_URI: mongodb://database:27017
+    # networks:
+    #   mcapp:
+    #     aliases:
+    #     - food
   visualizer:
     image: dockersamples/visualizer
     volumes: 
@@ -37,4 +41,4 @@ services:
     - microservice
 
 # networks:
-#   mapp:
+#   mcapp:
