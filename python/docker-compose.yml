@@ -1,0 +1,8 @@
+version: "3"
+services:
+  web:
+    image: alextanhongpin/web-python
+    ports:
+    - "5000:5000"
+    volumes:
+    - .:/code
