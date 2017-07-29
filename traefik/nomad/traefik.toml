@@ -1,0 +1,8 @@
+
+logLevel = "DEBUG"
+
+
+[consulCatalog]
+endpoint = "consul.service.consul:8500"
+domain = "consul.localhost"
+prefix = "traefik"
