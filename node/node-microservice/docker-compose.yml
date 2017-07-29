@@ -10,14 +10,29 @@ services:
     # expose: Exposing ports is unnecessary - services on the same network can access each other's containers on any port.
     # expose:
     # - 8080
+    # docker-compose up will start services in dependency order, although it will not wait for the services to be ready
     depends_on:
     - database
     environment:
       MONGO_URI: mongodb://database:27017
     networks:
       microapp:
+        # Here we are giving our network name an alias that other services can call
+        # So if we scale microservice up to 3, then instead of calling microservice:8080
+        # we can call com.microservices and it will automatically do a round-robin to 
+        # all the instances.
         aliases:
-        - test
+        - com.microservices
+    labels:
+      com.microservices.description: "Server side microservice that returns a sample user data"
+      com.microservices.version: "0.0.1"
+    deploy:
+      replicas: 3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/users"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   visualizer:
     image: dockersamples/visualizer
@@ -40,10 +55,13 @@ services:
     image: alextanhongpin/web-client
     ports:
     - 8080
-    links:
-    - microservice
-    depends_on:
-    - microservice
+    # Note that we do not even need to link the microservice, we can directly make a call to microservice:8080
+    # or com.microservices from the client
+    # Links is a legacy option
+    # links:
+    # - microservice
+    # depends_on:
+    # - microservice
     networks:
       microapp:
 
