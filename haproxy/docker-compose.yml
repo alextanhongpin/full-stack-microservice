@@ -1,0 +1,27 @@
+version: '3'
+services:
+  haproxy:
+    image: haproxy:1.7
+    volumes:
+    - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    expose:
+    - 8080
+    - 80
+    ports:
+    - 8080:8080
+    - 80:80
+    depends_on:
+    - web
+    networks:
+      lb:
+  web:
+    image: alextanhongpin/echo
+    ports:
+    - 8080
+    networks:
+      lb:
+        aliases:
+        - webs
+
+networks:
+  lb:

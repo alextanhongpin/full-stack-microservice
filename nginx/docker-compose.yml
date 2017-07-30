@@ -1,0 +1,22 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    volumes: 
+    - "./nginx.conf:/etc/nginx/nginx.conf"
+    ports:
+    - 80:80
+    depends_on:
+    - web
+    networks:
+      lb:
+  web:
+    image: alextanhongpin/echo
+    ports:
+    - 8080
+    networks:
+      lb:
+        aliases:
+        - webs
+networks:
+  lb:
