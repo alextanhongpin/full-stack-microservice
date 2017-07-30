@@ -1,0 +1,14 @@
+{
+  "ID": "redis2",
+  "Name": "redis",
+  "Tags": [
+    "primary",
+    "v1",
+    "traefik.backend=whoami",
+    "traefik.frontend.rule=Host:whoami.consul.localhost",
+    "traefik.frontend.entryPoints=http"
+  ],
+  "Address": "127.0.0.1",
+  "Port": 8001,
+  "EnableTagOverride": false
+}

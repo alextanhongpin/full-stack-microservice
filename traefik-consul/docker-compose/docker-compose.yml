@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  consul:
+    image: consul:latest
+    networks:
+      webapp:
+    expose:
+    - 8500
+    ports:
+    - 8500:8500
+    restart: on-failure
+
+  traefik:
+    networks:
+      webapp:
+    image: traefik:latest
+    # Optional. Use the conf file
+    command: "--web --consul --consul.endpoint=consul:8500 --consul.watch --consulcatalog --consulcatalog.endpoint=consul:8500  --consulcatalog.domain=consul.localhost --consulcatalog.watch"
+    # volumes:
+    # - './conf/:/etc/traefik/'
+    # links:
+    # - consul
+    # depends_on:
+    # - consul
+    ports:
+    - 8080:8080
+    restart: on-failure
+
+  service:
+    image: alextanhongpin/web
+    expose:
+    - 8080
+    ports:
+    - 8080
+    networks:
+      webapp:
+    labels:
+      - "traefik.backend=whoami"
+      - "traefik.frontend.rule=Host:whoami.consul.localhost"
+
+networks:
+  webapp:

@@ -7,11 +7,18 @@ job "lb" {
 
     config {
       image = "traefik:latest"
+      
+      labels {
+        traefik.backend = "ui",
+        traefik.enable = "true",
+        traefik.frontend.rule = "Host:ui.docker.localhost"
+      }
 
       volumes = [
         "/var/run/docker.sock:/var/run/docker.sock",
         # "docker.endpoint:/var/run/docker.sock", # Doesn't work
-        "/Users/alextanhongpin/Documents/nodejs/full-stack-microservice/traefik/nomad/conf/traefik.toml:/etc/traefik/traefik.toml" # Must use absolute path
+        # If it's not running, check the absolute path
+        "/Users/alextanhongpin/Documents/nodejs/full-stack-microservice/traefik-docker/nomad/conf/traefik.toml:/etc/traefik/traefik.toml" # Must use absolute path
       ]
 
       # If you are not planning to use the traefik.toml file, you can also define it here
@@ -33,7 +40,6 @@ job "lb" {
 
     service {
       name = "traefik-admin"
-      # tags = ["loadbalancer", "admin", "traefik.enable=true", "traefik.docker.network=nomad_docker"]
       port = "admin"
 
       check {
@@ -46,7 +52,6 @@ job "lb" {
 
     service {
       name = "traefik-frontend"
-      # tags = ["loadbalancer", "frontend", "traefik.docker.network=nomad_docker"]
       port = "frontend"
 
       check {
@@ -75,7 +80,7 @@ job "lb" {
   }
 
 
-  group "whoamis" {
+  group "whoamis_docker" {
     count = 3
 
     restart {
@@ -96,7 +101,7 @@ job "lb" {
           image = "emilevauge/whoami"
           labels {
             traefik.backend = "whoami",
-            traefik.frontend.rule = "Host:whoami.localhost",
+            traefik.frontend.rule = "Host:whoami.docker.localhost",
             traefik.enable = "true",
             traefik.frontend.entryPoints = "http"
           }
@@ -106,12 +111,18 @@ job "lb" {
         name = "whoami"
         # Using Tags is incorrect
         // tags = [
-        //     "traefik.backend=whoami",
-        //     "traefik.frontend.rule=Host:docker.localhost",
+        //     "traefik.backend=consul_whoami",
+        //     "traefik.frontend.rule=Host:consul.localhost",
         //     "traefik.enable=true",
         //     "traefik.frontend.entryPoints=http",
         //     # "traefik.docker.network=nomad_docker"
         // ]
+        // check {
+        //   type     = "tcp"
+        //   port     = "http"
+        //   interval = "10s"
+        //   timeout  = "2s"
+        // }
         port = "http"
       }
       resources {

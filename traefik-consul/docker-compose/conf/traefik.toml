@@ -1,0 +1,22 @@
+logLevel = "DEBUG"
+
+[web]
+address = ":8080"
+
+[consul]
+# endpoint = "127.0.0.1:8500"
+watch = true
+prefix = "traefik"
+
+
+[consulCatalog]
+# endpoint = "127.0.0.1:8500"
+watch = true
+domain = "consul.localhost"
+prefix = "traefik"
+enable = true
+# frontend.rule = "Host:consul.localhost"
+
+
+# [file]
+# filename = "rules.toml"
