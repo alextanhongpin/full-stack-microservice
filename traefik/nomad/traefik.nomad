@@ -2,59 +2,38 @@ job "lb" {
   datacenters = ["dc1"]
   type = "service"
 
-//   constraint {
-//     attribute = "${node.class}"
-//     value     = "loadbalancer"
-//   }
-
   task "traefik" {
     driver = "docker"
 
-    // artifact {
-    //   source      = "git::https://github.com/AreteLabs/nomad-examples"
-    //   destination = "local/config"
-    // }
-
-    // template {
-    //   source      = "local/config/traefik/traefik.toml"
-    //   destination = "local/traefik/traefik.toml"
-    // }
-
     config {
-      image = "traefik:1.3.4"
+      image = "traefik:latest"
 
       volumes = [
         "/var/run/docker.sock:/var/run/docker.sock",
-        "${PWD}:/etc/traefik"
+        # "docker.endpoint:/var/run/docker.sock", # Doesn't work
+        "/Users/alextanhongpin/Documents/nodejs/full-stack-microservice/traefik/nomad/conf/traefik.toml:/etc/traefik/traefik.toml" # Must use absolute path
       ]
 
-      args = [
-        "--web",
-        "--docker",
-        "--docker.domain=docker.localhost",
-        "--logLevel=DEBUG"
-      ]
+      # If you are not planning to use the traefik.toml file, you can also define it here
+      // args = [
+      //   "--web", # Required to display the dashboard ui
+      //   "--docker", # Use docker backend
+      //   "--docker.domain=testing.localhost",
+      //   "--docker.watch=true",
+      //   "--logLevel=DEBUG"
+      // ]
 
       port_map {
         admin    = 8080
         frontend = 80
       }
-
-      # dns_servers = ["${NOMAD_IP_admin}"]
+      
       dns_servers = ["${attr.unique.network.ip-address}"]
     }
 
     service {
       name = "traefik-admin"
-      # tags = ["loadbalancer", "admin", "traefik.enable=true", "traefik.frontend.rule=Host:admin.10.244.234.64.sslip.io"]
-    //   tags = [
-    //     "whoami",
-    //     "loadbalancer",
-    //     "traefik.backend=whoami",
-    //     "traefik.frontend.rule=Host:whoami.docker.localhost",
-    //     "traefik.enable=true"
-    //   ]
-
+      # tags = ["loadbalancer", "admin", "traefik.enable=true", "traefik.docker.network=nomad_docker"]
       port = "admin"
 
       check {
@@ -67,8 +46,7 @@ job "lb" {
 
     service {
       name = "traefik-frontend"
-      // tags = ["loadbalancer", "frontend"]
-
+      # tags = ["loadbalancer", "frontend", "traefik.docker.network=nomad_docker"]
       port = "frontend"
 
       check {
@@ -96,6 +74,7 @@ job "lb" {
     }
   }
 
+
   group "whoamis" {
     count = 3
 
@@ -109,39 +88,40 @@ job "lb" {
     ephemeral_disk {
       size = 500
     }
-    // constraint {
-    //     operator  = "distinct_hosts"
-    //     value     = "true"
-    // }
-    task "service_whoami" {
-        driver = "docker"
 
-        config {
-            image = "emilevauge/whoami"
+    task "backend" {
+      driver = "docker"
+
+      config {
+          image = "emilevauge/whoami"
+          labels {
+            traefik.backend = "whoami",
+            traefik.frontend.rule = "Host:whoami.localhost",
+            traefik.enable = "true",
+            traefik.frontend.entryPoints = "http"
+          }
+      }
+
+      service {
+        name = "whoami"
+        # Using Tags is incorrect
+        // tags = [
+        //     "traefik.backend=whoami",
+        //     "traefik.frontend.rule=Host:docker.localhost",
+        //     "traefik.enable=true",
+        //     "traefik.frontend.entryPoints=http",
+        //     # "traefik.docker.network=nomad_docker"
+        // ]
+        port = "http"
+      }
+      resources {
+        cpu    = 200
+        memory = 200
+        network {
+            mbits = 50
+            port "http" {}
         }
-
-        service {
-            name = "whoami"
-            tags = [
-                "traefik.backend=whoami",
-                "traefik.frontend.rule=Host:whoami.docker.localhost",
-                "traefik.enable=true",
-                "traefik.frontend.entryPoints=http"
-            ]
-            port = "http"
-        }
-        resources {
-            cpu    = 200
-            memory = 200
-
-            network {
-                mbits = 50
-
-                port "http" {
-                }
-            }
-        }
+      }
     }
   }
-
 }

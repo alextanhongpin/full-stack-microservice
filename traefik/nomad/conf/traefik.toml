@@ -1,0 +1,36 @@
+################################################################
+# Web configuration backend
+################################################################
+
+logLevel = "DEBUG"
+
+[web]
+address = ":8080" # Required to display the dashboard
+
+[docker]
+domain = "docker.localhost"
+watch = true
+
+# [consul]
+# # "consul.service.consul:8500"
+# endpoint = "127.0.0.1:8500"
+# watch = true
+# prefix = "traefik"
+
+# [consulCatalog]
+# endpoint = "127.0.0.1:8500"
+# domain = "consul.localhost"
+# prefix = "traefik"
+# traefik.enable = false: disable this container in Træfik
+# traefik.protocol = https: override the default http protocol
+# traefik.backend.weight = 10: assign this weight to the container
+# traefik.backend.circuitbreaker = NetworkErrorRatio() > 0.5
+# traefik.backend.loadbalancer = drr: override the default load balancing mode
+# traefik.backend.maxconn.amount = 10: set a maximum number of connections to the backend. Must be used in conjunction with the below label to take effect.
+# traefik.backend.maxconn.extractorfunc = client.ip: set the function to be used against the request to determine what to limit maximum connections to the backend by. Must be used in conjunction with the above label to take effect.
+# traefik.frontend.rule = Host:test.traefik.io: override the default frontend rule (Default: Host:{containerName}.{domain}).
+# traefik.frontend.passHostHeader = true: forward client Host header to the backend.
+# traefik.frontend.priority = 10: override default frontend priority
+# traefik.frontend.entryPoints = http,https: assign this frontend to entry points http and https. Overrides defaultEntryPoints.
+
+

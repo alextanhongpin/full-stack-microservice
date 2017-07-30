@@ -1,0 +1,3 @@
+2017/07/30 16:26:18.813178 [INFO] executor: registering services
+2017/07/30 16:38:50.388064 [INFO] executor: de-registering services and shutting down consul service
+2017/07/30 16:39:12.848237 [INFO] executor: registering services
