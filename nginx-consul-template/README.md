@@ -22,6 +22,7 @@ $ curl \
 
 # Should return results
 $ curl http://localhost:8500/v1/agent/services
+$ curl http://localhost:8500/v1/catalog/services
 
 
 {
