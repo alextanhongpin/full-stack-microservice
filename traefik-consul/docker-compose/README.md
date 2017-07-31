@@ -14,6 +14,9 @@ $ docker-compose up -d --scale whoami=3
 Check the port for traefik
 0.0.0.0:32781->80/tcp
 
+ui is available at 
+0.0.0.0:32786->8080/tcp
+
 Check the frontend rule for whoami
 Host:whoami.consul.localhost
 

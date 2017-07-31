@@ -1,0 +1,11 @@
+{
+  "ID": "web3",
+  "Name": "web",
+  "Tags": [
+    "primary",
+    "v1"
+  ],
+  "Address": "192.168.8.102",
+  "Port": 32785,
+  "EnableTagOverride": false
+}

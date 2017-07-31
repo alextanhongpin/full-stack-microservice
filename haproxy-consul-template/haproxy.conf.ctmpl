@@ -1,0 +1,30 @@
+global
+    daemon
+    maxconn 4096
+
+defaults
+    mode http
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+
+frontend web
+    bind *:80
+    mode http
+    default_backend nodes
+
+backend nodes
+    balance roundrobin
+    mode http
+    option forwardfor
+    http-request set-header X-Forwarded-Port %[dst_port]
+    option httpchk HEAD / HTTP/1.1\r\nHost:localhost
+{{- range $key, $value := service "web" }}
+    server {{.Name}}{{add $key 1}} {{.Address}}:{{.Port}} check
+{{- end }}
+
+listen stats 
+    bind 0.0.0.0:8080
+    mode http
+    stats enable
+    stats uri /

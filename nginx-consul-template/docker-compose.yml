@@ -1,0 +1,45 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+    - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+    - 80:80
+    networks:
+      lb:
+    depends_on:
+    - web
+    # network_mode: "host" # Less secure
+  registry:
+    image: gliderlabs/registrator:latest
+    command: -internal -cleanup consul://consul:8500
+    # network_mode: host # Equivalent to --net=host
+    volumes:
+    - "/var/run/docker.sock:/tmp/docker.sock"
+    depends_on:
+    - consul
+    networks:
+      lb:
+
+  consul:
+    image: consul:0.9.0
+    ports:
+    - 8500:8500
+    restart: on-failure
+    networks:
+      lb:
+
+  web:
+    image: alextanhongpin/echo
+    ports:
+    - 8080
+    depends_on:
+    - registry
+    networks:
+      lb:
+  
+networks:
+  lb:
+    # external:
+    #   name: bridge
