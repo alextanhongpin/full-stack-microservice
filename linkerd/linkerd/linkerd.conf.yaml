@@ -34,6 +34,10 @@ routers:
   client:
    requeueBudget:
     percentCanRetry: 5.0
+   loadBalancer:
+    kind: ewma
+    maxEffort: 10
+    decayTimeMs: 15000
 
 usage:
   orgId: linkerd-examples-consul

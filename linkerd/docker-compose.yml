@@ -46,6 +46,9 @@ services:
       - SERVICE_NAME=server
       - SERVICE_TAGS=dev
       - SERVICE_REGION=us2
+    # links:
+    # - consul-registrator
+    # - linkerd
     networks:
       lb:
 
