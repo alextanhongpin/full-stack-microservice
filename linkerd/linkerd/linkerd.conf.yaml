@@ -1,0 +1,39 @@
+namers:
+# Consul service discovery
+- kind: io.l5d.consul
+  # prefix: io.l5d.consul
+  host: consul # default: localhost
+  port: 8500
+  includeTag: false # whether to read Consul tag from the path
+  useHealthCheck: true
+  # token: 
+  setHost: true # ${serviceName}.service.${datacenter}.consul
+  consistencyMode: stale
+  failFast: true
+  preferServiceAddress: true
+
+routers:
+- protocol: http
+  label: /http-consul
+  service:
+    responseClassifier:
+      kind: io.l5d.http.retryableIdempotent5XX
+  identifier:
+    kind: io.l5d.path
+    segments: 1
+    consume: true
+  # Dtab
+  dtab: |
+    /svc => /#/io.l5d.consul/dc1;
+    # When include tag is true,  it takes three path components: datacenter, tag, and serviceName
+    # /http/1.1/* => /#/io.l5d.consul/dc1/dev;
+    # /svc => /#/io.l5d.consul/dc1/dev;
+  servers:
+  - port: 4140
+    ip: 0.0.0.0
+  client:
+   requeueBudget:
+    percentCanRetry: 5.0
+
+usage:
+  orgId: linkerd-examples-consul
