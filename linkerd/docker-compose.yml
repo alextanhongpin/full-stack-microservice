@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   consul:
     image: consul:0.9.0
@@ -10,8 +10,6 @@ services:
   linkerd:
     image: buoyantio/linkerd:1.1.2
     command: /config.yaml
-    links:
-    - consul
     volumes:
     - ./linkerd/linkerd.conf.yaml:/config.yaml
     # - ./disco:/io.buoyant/disco
@@ -26,12 +24,11 @@ services:
   consul-registrator:
     image: gliderlabs/registrator:v7
     command: consul://consul:8500
-    links:
-    - consul
     volumes:
     - /var/run/docker.sock:/tmp/docker.sock
     depends_on:
     - consul
+    # network_mode: host
     networks:
       lb:
 
@@ -77,3 +74,8 @@ services:
 
 networks:
   lb:
+  # If left uncommented, pub_net is a macvlan network
+  # To get the Gateway, docker network inspect pub_net
+  # sudo ifconfig lo0 alias 172.16.86.1
+    # external:
+    #   name: pub_net
