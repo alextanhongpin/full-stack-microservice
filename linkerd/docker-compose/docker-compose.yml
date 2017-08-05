@@ -13,8 +13,18 @@ services:
     ports:
       - 9990:9990
       - 4140:4140
+      - 4141:4141
     depends_on:
     - consul-registrator
+    - zipkin
+  
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+    - 9411:9411
+    - 9410:9410
+    environment:
+    - SCRIBE_ENABLED=true 
 
   consul-registrator:
     image: gliderlabs/registrator:v7
