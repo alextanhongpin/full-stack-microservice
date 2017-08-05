@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  consul:
+    image: consul:latest
+    ports:
+    - 8500:8500
+    restart: on-failure
+
+  registry:
+    image: gliderlabs/registrator:latest
+    command: -ip=docker.for.mac.localhost -cleanup consul://docker.for.mac.localhost:8500
+    #network_mode: host # Equivalent to --net=host
+    volumes:
+    - "/var/run/docker.sock:/tmp/docker.sock"
+    depends_on:
+    - consul
+
+  fabio:
+    image: magiconair/fabio:latest
+    ports:
+    - 9999:9999
+    - 9998:9998
+    depends_on:
+    - consul
+    volumes:
+    - ./fabio.properties:/etc/fabio/fabio.properties
+    environment:
+    - SERVICE_9998_TAGS=urlprefix-/fabio
+
+
+  web:
+    image: tutum/hello-world
+    ports:
+    - 80
+    environment:
+    - SERVICE_TAGS=urlprefix-/
+    - SERVICE_CHECK_HTTP=/
+
