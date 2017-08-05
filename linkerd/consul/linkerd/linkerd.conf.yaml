@@ -1,8 +1,11 @@
+admin: 
+  port: 9990
+
 namers:
 # Consul service discovery
 - kind: io.l5d.consul
   # prefix: io.l5d.consul
-  host: consul # default: localhost
+  host: docker.for.mac.localhost # default: localhost, use consul if on container
   port: 8500
   includeTag: false # whether to read Consul tag from the path
   useHealthCheck: true
@@ -24,7 +27,7 @@ routers:
     consume: true
   # Dtab
   dtab: |
-    /svc => /#/io.l5d.consul/dc1;
+    /svc => /#/io.l5d.consul/.local;
     # When include tag is true,  it takes three path components: datacenter, tag, and serviceName
     # /http/1.1/* => /#/io.l5d.consul/dc1/dev;
     # /svc => /#/io.l5d.consul/dc1/dev;
