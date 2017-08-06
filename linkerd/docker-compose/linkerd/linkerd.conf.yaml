@@ -2,20 +2,32 @@ admin:
   port: 9990
 
 namers:
-# Consul service discovery
-- kind: io.l5d.consul
-  # prefix: io.l5d.consul
-  host: docker.for.mac.localhost # default: localhost, use consul if on container
-  port: 8500
-  includeTag: false # whether to read Consul tag from the path
-  useHealthCheck: true
-  # token: 
-  setHost: true # ${serviceName}.service.${datacenter}.consul
-  consistencyMode: stale
-  failFast: true
-  preferServiceAddress: true
+  # Consul service discovery
+  - kind: io.l5d.consul
+    # prefix: io.l5d.consul
+    host: docker.for.mac.localhost # default: localhost, use consul if on container
+    port: 8500
+    includeTag: false # whether to read Consul tag from the path
+    useHealthCheck: true
+    # token: 
+    setHost: false # ${serviceName}.service.${datacenter}.consul
+    consistencyMode: stale
+    failFast: true
+    preferServiceAddress: true
+  - kind: io.l5d.consul
+    prefix: /io.l5d.linker_to_consul
+    host: docker.for.mac.localhost
+    port: 8500
+    includeTag: false
+    useHealthCheck: true
+    setHost: true
+    consistencyMode: stale
+    failFast: true
+    preferServiceAddress: true
 
 routers:
+# http 1.1: service -> [linkerd] -> linkerd -> service
+# should lookup consul service then rewrite outgoing port to linkerd
 - label: /http-consul-out
   protocol: http
   service:
@@ -29,15 +41,20 @@ routers:
     # Defaults to `host: audit`
     # header: l5d-name #  curl -H "l5d-name: audit" localhost:4140/
   # Dtab
+  # /svc/server.service.dc1.consul
   dtab: |
     /svc => /#/io.l5d.consul/.local;
-    # /host => /srv;
-    # When include tag is true,  it takes three path components: datacenter, tag, and serviceName
-    # /http/1.1/* => /#/io.l5d.consul/dc1/dev;
-    # /svc => /#/io.l5d.consul/dc1/dev;
+    # /consulSvc  => /#/io.l5d.consul/.local;
+    # /host       => /$/io.buoyant.http.subdomainOfPfx/service.consul/consulSvc;
+    # /svc => /host;
   servers:
   - port: 4140
     ip: 0.0.0.0
+  interpreter:
+    kind: default
+    transformers:
+      - kind: io.l5d.port
+        port: 4141
 
   client:
    requeueBudget:
@@ -47,25 +64,29 @@ routers:
     maxEffort: 10
     decayTimeMs: 15000
 
-# - label: /http-consul-in
-#   protocol: http
-#   servers:
-#     - port: 4141
-#       ip: 0.0.0.0
-#       tls:
-#         # certPath: /etc/linkerd/server.crt
-#         # keyPath: /etc/linkerd/server.crt
-#   # auth.linkerd -> auth.service.consul
-#   dtab: |
-#     /consulSvc  => /#/io.l5d.consul/.local;
-#     /host => /$/io.buoyant.http.subdomainOfPfx/linkerd/consulSvc;
-#     /svc => /host;
-#   identifier:
-#     kind: io.l5d.header.token
-#   interpreter:
-#     kind: default
-#     transformers:
-#       - kind: io.l5d.localhost
+# OUT
+# http 1.1: service -> linkerd -> [linkerd] -> service
+# should lookup local service then filter down to local node
+- label: /http-consul-in
+  protocol: http
+  servers:
+    - port: 4141
+      ip: 0.0.0.0
+      # tls:
+        # certPath: /etc/linkerd/server.crt
+        # keyPath: /etc/linkerd/server.crt
+  dtab: |
+    # /svc  => /#/io.l5d.linker_to_consul/dc1; # web.service.dc1.consul -> /svc/server
+    /consulSvc  => /#/io.l5d.consul/.local;
+    /host       => /$/io.buoyant.http.subdomainOfPfx/service.consul/consulSvc;
+    /svc => /host;
+  identifier:
+    kind: io.l5d.header.token
+  interpreter:
+    kind: default
+    transformers:
+      - kind: io.l5d.localhost
+
 telemetry:
 - kind: io.l5d.zipkin
   host: docker.for.mac.localhost # zipkin

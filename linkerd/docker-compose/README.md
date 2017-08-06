@@ -19,12 +19,12 @@ $ curl localhost:4140/audit/health
 $ curl -H "l5d-name: audit" localhost:4140/ # returns Hello World!%
 
 # If your service has another path name (/audit/health), this is how you specify it
-$ curl -H "host: audit" localhost:4140/health # I am healthy!%
+$ curl -H "Host: helloworld" localhost:4140/health # I am healthy!%
 
-$ curl -H "host: server" localhost:4140
+$ curl -H "Host: server.service.dc1.consul" localhost:4140
+$ curl  -i  -H "Host: server" localhost:4140
 
 ```
-
 
 ```yaml
 consul-registrator:

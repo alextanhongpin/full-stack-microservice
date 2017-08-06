@@ -9,7 +9,7 @@ services:
     image: buoyantio/linkerd:1.1.2
     command: /config.yaml
     volumes:
-    - ./linkerd/linkerd.conf.yaml:/config.yaml
+      - ./linkerd/linkerd.conf.yaml:/config.yaml
     ports:
       - 9990:9990
       - 4140:4140
@@ -18,6 +18,16 @@ services:
     - consul-registrator
     - zipkin
   
+  # namerd:
+  #   image: buoyantio/namerd:1.1.2
+  #   command: /io.buoyant/linkerd/config/namerd.yml
+  #   ports:
+  #     - 4100:4100
+  #     - 4180:4180
+  #     - 9991:9991
+  #   volumes:
+  #     - ./config:/io.buoyant/linkerd/config:ro
+
   zipkin:
     image: openzipkin/zipkin
     ports:
@@ -41,7 +51,7 @@ services:
     - 8080 # Ports cannot be dynamic?
     environment:
       - SERVICE_NAME=server
-      - SERVICE_TAGS=dev
+      - SERVICE_TAGS=svc
       - SERVICE_REGION=us2
 
   # audit: 
@@ -64,9 +74,3 @@ services:
 
 
 
-  # namerd:
-  #   image: buoyantio/namerd:1.1.2
-  #   container_name: namerd
-  #   ports: ["4100:4100", "4180:4180", "9991:9991"]
-  #   volumes: ["./config:/io.buoyant/linkerd/config:ro"]
-  #   command: /io.buoyant/linkerd/config/namerd.yml
