@@ -1,0 +1,21 @@
+
+logLevel = "DEBUG"
+
+[web]
+address = ":8080"
+
+[consul]
+endpoint = "127.0.0.1:8500"
+watch = true
+prefix = "traefik"
+
+[consulCatalog]
+endpoint = "127.0.0.1:8500"
+domain = "consul.localhost"
+watch = true
+prefix = "traefik"
+constraints = ["tag==traefik"] # Exclude all services without the traefik.tags=traefik. To filter consul and nomad.
+
+# [docker]
+# domain = "docker.local"
+# watch = true
