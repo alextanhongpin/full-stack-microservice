@@ -1,10 +1,30 @@
 const express = require('express')
 const app = express()
 const os = require('os')
+const hostname = os.hostname()
 
 app.get('/', (req, res) => {
-  // Without http, it will throw error "Invalid protocol: microservice:"
-  res.status(200).json(Object.assign({}, req.headers, { hostname: os.hostname() || req.hostname }, os.networkInterfaces()))
+  res.status(200).json({
+    hostname
+  })
+})
+
+app.get('/instable', (req, res) => {
+  if (Math.random() < 0.2) {
+    res.status(400).json({
+      error: 'Failing on purpose'
+    })
+  } else {
+    res.status(200).json({
+      hostname
+    })
+  }
+})
+
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    message: 'Healthy'
+  })
 })
 
 // Round robin when using aliases

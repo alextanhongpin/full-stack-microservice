@@ -1,1 +1,2 @@
-Smaple Treafik with Consul backend
+Sample Treafik with Consul backend
+
