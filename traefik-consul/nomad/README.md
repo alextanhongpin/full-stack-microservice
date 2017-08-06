@@ -1,3 +1,7 @@
+# nomad traefik
+
+If you have trouble running nomad, set the data dir when executing `nomad agent -dev -data-dir=${PWD}/tmp/nomad`.
+
 ##  Method 1
 Run traefik, consul and nomad separately
 
