@@ -1,0 +1,73 @@
+admin: 
+  port: 9990
+
+namers:
+# Consul service discovery
+- kind: io.l5d.consul
+  # prefix: io.l5d.consul
+  host: 127.0.0.1 # default: localhost, use consul if on container
+  port: 8500
+  includeTag: false # whether to read Consul tag from the path
+  useHealthCheck: true
+  # token: 
+  setHost: true # ${serviceName}.service.${datacenter}.consul
+  consistencyMode: stale
+  failFast: true
+  preferServiceAddress: true
+
+routers:
+- label: /http-consul-out
+  protocol: http
+  service:
+    responseClassifier:
+      kind: io.l5d.http.retryableRead5XX
+    retries:
+      budget:
+        percentCanRetry: 0.1 # For every 10 non-retry calls, allow 1 retry
+  identifier:
+    kind: io.l5d.header.token
+    # Defaults to `host: audit`
+    # header: l5d-name #  curl -H "l5d-name: audit" localhost:4140/
+  # Dtab
+  dtab: |
+    /svc => /#/io.l5d.consul/.local;
+    # /host => /srv;
+    # When include tag is true,  it takes three path components: datacenter, tag, and serviceName
+    # /http/1.1/* => /#/io.l5d.consul/dc1/dev;
+    # /svc => /#/io.l5d.consul/dc1/dev;
+  servers:
+  - port: 4140
+    ip: 127.0.0.1 # 0.0.0.0
+
+  client:
+   # Retry
+   requeueBudget:
+    percentCanRetry: 5.0
+   # Load-balancer
+   loadBalancer:
+    kind: ewma
+    maxEffort: 10
+    decayTimeMs: 15000
+   # Circuit-breaker
+   failureAccrual: # Remove any instance that has failed 5 requests in a row.
+    kind: io.l5d.consecutiveFailures
+    failures: 5
+    backoff:
+      kind: constant
+      ms: 10000
+  #  failureAccrual: # Remove any instance that has a success rate below 90%, computed over its 20 most recently completed requests
+  #   kind: io.l5d.successRate
+  #   successRate: 0.9
+  #   requests: 20
+  #   backoff:
+  #     kind: constant
+  #     ms: 10000
+
+# telemetry:
+# - kind: io.l5d.zipkin
+#   host: docker.for.mac.localhost # zipkin
+#   port: 9410
+  # sampleRate: 1.0
+
+usage:
+  orgId: linkerd-examples-consul

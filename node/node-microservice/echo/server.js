@@ -3,6 +3,7 @@ const app = express()
 const os = require('os')
 const hostname = os.hostname()
 
+let isSuccess = true
 app.get('/', (req, res) => {
   res.status(200).json({
     hostname
@@ -10,15 +11,22 @@ app.get('/', (req, res) => {
 })
 
 app.get('/instable', (req, res) => {
-  if (Math.random() < 0.2) {
-    res.status(400).json({
-      error: 'Failing on purpose'
-    })
-  } else {
+  if (isSuccess) {
     res.status(200).json({
       hostname
     })
+  } else {
+    res.status(500).json({
+      error: 'Internal server error'
+    })
   }
+})
+
+app.get('/toggle', (req, res) => {
+  isSuccess = !isSuccess
+  res.status({
+    is_success: isSuccess
+  })
 })
 
 app.get('/health', (req, res) => {

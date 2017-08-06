@@ -44,14 +44,14 @@ services:
       - SERVICE_TAGS=dev
       - SERVICE_REGION=us2
 
-  audit: 
-    build: ./node/
-    ports:
-    - 8100
-    environment:
-      - SERVICE_NAME=audit
-      - SERVICE_TAGS=dev
-      - SERVICE_REGION=us2
+  # audit: 
+  #   build: ./node/
+  #   ports:
+  #   - 8100
+  #   environment:
+  #     - SERVICE_NAME=audit
+  #     - SERVICE_TAGS=dev
+  #     - SERVICE_REGION=us2
 
   service:
     image: buoyantio/helloworld
@@ -61,3 +61,12 @@ services:
     environment:
       - SERVICE_TAGS=dev
       - SERVICE_REGION=us2
+
+
+
+  # namerd:
+  #   image: buoyantio/namerd:1.1.2
+  #   container_name: namerd
+  #   ports: ["4100:4100", "4180:4180", "9991:9991"]
+  #   volumes: ["./config:/io.buoyant/linkerd/config:ro"]
+  #   command: /io.buoyant/linkerd/config/namerd.yml

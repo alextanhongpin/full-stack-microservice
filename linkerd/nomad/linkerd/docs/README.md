@@ -1,0 +1,1 @@
+Please refer to https://linkerd.io/doc/getting-started/

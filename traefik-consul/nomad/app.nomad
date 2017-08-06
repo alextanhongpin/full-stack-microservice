@@ -86,7 +86,7 @@ job "app" {
       size = 300
     }
     task "traefik" {
-      # The traefik docker image does not work with consul
+      # NOTE: The traefik docker image does not work with local consul on the host
       driver = "raw_exec"
 
       config {

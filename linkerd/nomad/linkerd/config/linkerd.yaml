@@ -1,0 +1,42 @@
+admin:
+  port: 9990
+
+namers:
+- kind: io.l5d.fs
+  rootDir: disco
+
+routers:
+- protocol: http
+  dtab: |
+    /svc => /#/io.l5d.fs;
+  httpAccessLog: logs/access.log
+  label: int
+  servers:
+  - port: 4140
+    ip: 0.0.0.0
+
+- protocol: thrift
+  label: /host/thrift-framed
+  thriftProtocol: binary
+  dtab: |
+    /host => /#/io.l5d.fs;
+    /svc  => /host/thrift-framed;
+  client:
+    thriftFramed: true
+  servers:
+  - port: 4141
+    ip: 0.0.0.0
+    thriftFramed: true
+
+- protocol: thrift
+  label: /host/thrift-buffered
+  thriftProtocol: compact
+  dtab: |
+    /host => /#/io.l5d.fs;
+    /svc  => /host/thrift-buffered;
+  client:
+    thriftFramed: false
+  servers:
+  - port: 4142
+    ip: 0.0.0.0
+    thriftFramed: false
