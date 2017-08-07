@@ -10,10 +10,12 @@ namers:
     includeTag: false # whether to read Consul tag from the path
     useHealthCheck: true
     # token: 
+    # Should be false first
     setHost: false # ${serviceName}.service.${datacenter}.consul
     consistencyMode: stale
     failFast: true
     preferServiceAddress: true
+  
   - kind: io.l5d.consul
     prefix: /io.l5d.linker_to_consul
     host: docker.for.mac.localhost
@@ -38,15 +40,14 @@ routers:
         percentCanRetry: 0.1 # For every 10 non-retry calls, allow 1 retry
   identifier:
     kind: io.l5d.header.token
-    # Defaults to `host: audit`
+    # Defaults to `Host: audit`
     # header: l5d-name #  curl -H "l5d-name: audit" localhost:4140/
-  # Dtab
-  # /svc/server.service.dc1.consul
+    # Using path localhost:4140/helloworld
+    # kind: io.l5d.path
+    # segments: 1
+    # consume: true
   dtab: |
     /svc => /#/io.l5d.consul/.local;
-    # /consulSvc  => /#/io.l5d.consul/.local;
-    # /host       => /$/io.buoyant.http.subdomainOfPfx/service.consul/consulSvc;
-    # /svc => /host;
   servers:
   - port: 4140
     ip: 0.0.0.0
@@ -76,10 +77,14 @@ routers:
         # certPath: /etc/linkerd/server.crt
         # keyPath: /etc/linkerd/server.crt
   dtab: |
-    # /svc  => /#/io.l5d.linker_to_consul/dc1; # web.service.dc1.consul -> /svc/server
-    /consulSvc  => /#/io.l5d.consul/.local;
-    /host       => /$/io.buoyant.http.subdomainOfPfx/service.consul/consulSvc;
-    /svc => /host;
+    /svc  => /#/io.l5d.linker_to_consul/.local;
+    # /consulSvc  => /#/io.l5d.consul/.local;
+    # /host       => /$/io.buoyant.http.subdomainOfPfx/service.consul/consulSvc;
+    # /svc => /host;
+    # /consulSvc  => /#/io.l5d.linker_to_consul/.local;
+    # /host       => /$/io.buoyant.http.subdomainOfPfx/svc/consulSvc;
+    # /svc => /host;
+
   identifier:
     kind: io.l5d.header.token
   interpreter:
@@ -89,9 +94,11 @@ routers:
 
 telemetry:
 - kind: io.l5d.zipkin
-  host: docker.for.mac.localhost # zipkin
+  host: docker.for.mac.localhost
   port: 9410
-  # sampleRate: 1.0
+  sampleRate: 1.0
 
+# Don't send data to Buoyant
 usage:
   orgId: linkerd-examples-consul
+  enabled: false

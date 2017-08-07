@@ -23,7 +23,7 @@ $ curl -H "Host: helloworld" localhost:4140/health # I am healthy!%
 
 $ curl -H "Host: server.service.dc1.consul" localhost:4140
 $ curl  -i  -H "Host: helloworld" localhost:4140
-curl  -i  -H "Host: helloworld" localhost:4140
+curl  -i  -H "Host: api2" localhost:4140
 ```
 
 ```yaml
@@ -56,3 +56,5 @@ Load test
 ```bash
 $ wrk -c100 -t1 -d10s -H "host: server" http://localhost:4140
 ```
+
+docker-machine scp -r docker-compose-machine-2 dock0:/home/docker/

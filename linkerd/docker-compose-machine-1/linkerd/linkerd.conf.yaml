@@ -1,0 +1,52 @@
+admin: 
+  port: 9990
+
+namers:
+  # Consul service discovery
+  - kind: io.l5d.consul
+    # prefix: io.l5d.consul
+    host: docker.for.mac.localhost
+    port: 8500
+    includeTag: false
+    useHealthCheck: true
+    setHost: false
+    consistencyMode: stale
+    failFast: true
+    preferServiceAddress: true
+
+routers:
+# http 1.1: service -> [linkerd] -> linkerd -> service
+# should lookup consul service then rewrite outgoing port to linkerd
+- label: /http-consul-out
+  protocol: http
+  service:
+    responseClassifier:
+      kind: io.l5d.http.retryableIdempotent5XX
+    retries:
+      budget:
+        percentCanRetry: 0.1
+  identifier:
+    kind: io.l5d.header.token
+  dtab: |
+    /svc => /#/io.l5d.consul/.local;
+  servers:
+  - port: 4140
+    ip: 0.0.0.0
+  interpreter:
+    kind: default
+    transformers:
+      - kind: io.l5d.port
+        port: 4141
+
+  client:
+   requeueBudget:
+    percentCanRetry: 5.0
+   loadBalancer:
+    kind: ewma
+    maxEffort: 10
+    decayTimeMs: 15000
+
+# Don't send data to Buoyant
+usage:
+  orgId: linkerd-examples-consul
+  enabled: false
