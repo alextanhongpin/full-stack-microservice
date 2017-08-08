@@ -1,0 +1,58 @@
+version: '3'
+services:
+  consul:
+    image: consul:0.9.0
+    ports:
+    - 8500:8500
+
+  linkerd:
+    image: buoyantio/linkerd:1.1.2
+    command: /config.yaml
+    volumes:
+    - ./linkerd.yaml:/config.yaml
+    ports:
+    - 9990:9990
+    - 4140:4140
+    - 4141:4141
+    depends_on:
+    - registrator
+    - namerd
+  
+  namerd:
+    image: buoyantio/namerd:1.1.2
+    command: /config.yaml
+    volumes:
+    - ./namerd.yaml:/config.yaml
+    ports:
+    - 4100:4100
+    - 4180:4180
+    - 9991:9991
+
+  registrator:
+    image: gliderlabs/registrator:v7
+    command: -ip=docker.for.mac.localhost consul://consul:8500
+    volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+    depends_on:
+    - consul
+
+  api1:
+    image: alextanhongpin/echo:0.0.3
+    ports:
+    - 8080
+    environment:
+    - SERVICE_NAME=api1
+    - SERVICE_TAGS=svc
+    - SERVICE_REGION=us2
+    - TEXT=hello
+
+
+  api2:
+    image: alextanhongpin/echo:0.0.3
+    ports:
+    - 8080
+    environment:
+    - SERVICE_NAME=api2
+    - SERVICE_TAGS=svc
+    - SERVICE_REGION=us2
+    - TEXT=world

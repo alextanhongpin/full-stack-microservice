@@ -1,0 +1,49 @@
+admin:
+  port: 9991
+
+storage:
+  kind: io.l5d.inMemory
+  namespaces:
+    default: |
+      /grpc => /host;
+      /svc => /host/web;
+    client_to_linker: |
+      /svc => /#/io.l5d.client_to_linker/.local;
+    linker_to_consul: |
+      /svc => /#/io.l5d.linker_to_consul/.local;
+      /svc/api1 => /#/io.l5d.linker_to_consul/.local/api2 & 9 * /#/io.l5d.linker_to_consul/.local/api1;
+      # /host => /svc;
+      # /host/api1 => 1 * /host/api2 & 9 * /host/api1;
+      
+
+namers:
+- kind: io.l5d.consul
+  prefix: /io.l5d.client_to_linker
+  host: docker.for.mac.localhost
+  port: 8500
+  includeTag: false
+  useHealthCheck: true
+  setHost: false
+  consistencyMode: stale
+  failFast: true
+  preferServiceAddress: true
+
+- kind: io.l5d.consul
+  prefix: /io.l5d.linker_to_consul
+  host: docker.for.mac.localhost
+  port: 8500
+  includeTag: false
+  useHealthCheck: true
+  setHost: true
+  consistencyMode: stale
+  failFast: true
+  preferServiceAddress: true
+
+interfaces:
+- kind: io.l5d.thriftNameInterpreter
+  ip: 0.0.0.0
+  port: 4100
+- kind: io.l5d.httpController
+  ip: 0.0.0.0
+  port: 4180
+

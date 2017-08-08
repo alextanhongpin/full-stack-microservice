@@ -1,0 +1,2 @@
+/svc=>/#/io.l5d.linker_to_consul/.local;
+/svc/api1=>/#/io.l5d.linker_to_consul/.local/api2 & /#/io.l5d.linker_to_consul/.local/api1;

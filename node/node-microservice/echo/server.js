@@ -6,7 +6,8 @@ const hostname = os.hostname()
 let isSuccess = true
 app.get('/', (req, res) => {
   res.status(200).json({
-    hostname
+    hostname,
+    text: process.env.TEXT || 'hello'
   })
 })
 
