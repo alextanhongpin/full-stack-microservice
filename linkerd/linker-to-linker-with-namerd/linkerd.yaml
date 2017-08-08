@@ -1,28 +1,6 @@
 admin: 
   port: 9990
 
-# namers:
-# - kind: io.l5d.consul
-#   host: docker.for.mac.localhost
-#   port: 8500
-#   includeTag: false
-#   useHealthCheck: true
-#   setHost: false
-#   consistencyMode: stale
-#   failFast: true
-#   preferServiceAddress: true
-
-# - kind: io.l5d.consul
-#   prefix: /io.l5d.linker_to_consul
-#   host: docker.for.mac.localhost
-#   port: 8500
-#   includeTag: false
-#   useHealthCheck: true
-#   setHost: true
-#   consistencyMode: stale
-#   failFast: true
-#   preferServiceAddress: true
-
 routers:
 - label: outgoing
   protocol: http
