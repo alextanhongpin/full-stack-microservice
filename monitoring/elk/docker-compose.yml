@@ -58,10 +58,17 @@ services:
     - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     networks:
     - esnet
+    ports:
+     - 9500:9500
+     - 9600:9600
+     - 5000:5000
     depends_on:
     - elasticsearch1
     links:
     - elasticsearch1:elasticsearch
+    environment:
+    - HOSTNAME=elasticsearch
+    # command: -e ./usr/share/logstash/pipeline/logstash.conf
   web:
     image: alextanhongpin/echo:0.0.3
     ports:
@@ -73,6 +80,28 @@ services:
       options:
         gelf-address: udp://docker.for.mac.localhost:12201
         tag: fe
+    networks:
+    - esnet
+  api:
+    # will not work for go containers
+    # build: .
+    image: alextanhongpin/web-go
+    expose:
+    - 8080
+    ports:
+    - 8080
+    # logging:
+    #   driver: fluentd
+      # options:
+      #   fluentd-address: udp://docker.for.mac.localhost:12201
+      #   tag: next
+    logging:
+      driver: syslog
+      options:
+        syslog-address: tcp://docker.for.mac.localhost:5000
+        # syslog-facility: daemon
+    depends_on:
+    - logstash
     networks:
     - esnet
 
