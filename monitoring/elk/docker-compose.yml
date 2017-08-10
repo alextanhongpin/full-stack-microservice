@@ -1,0 +1,67 @@
+version: '3'
+services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:5.5.1
+    # volumes:
+    # - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+    - esnet
+    ports:
+    - 5601:5601
+    depends_on:
+    - elasticsearch1
+    environment:
+    # - SERVER_NAME=server.name
+    # - KIBANA_DEFAULTAPPID=kibana.defaultAppId
+    # - XPACK_MONITORING_ENABLED=xpack.monitoring.enabled
+    - ELASTICSEARCH_URL=http://elasticsearch1/9200
+  elasticsearch1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
+    container_name: elasticsearch1
+    environment:
+    - cluster.name=docker-cluster
+    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # mem_limit: 1g
+    volumes:
+    - ./tmp/es:/usr/share/elasticsearch/data
+    ports:
+    - 9200:9200
+    networks:
+    - esnet
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
+    environment:
+    - cluster.name=docker-cluster
+    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    - "discovery.zen.ping.unicast.hosts=elasticsearch1"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # mem_limit: 1g
+    volumes:
+    - ./tmp/es:/usr/share/elasticsearch/data
+    networks:
+    - esnet
+  logstash:
+    image: docker.elastic.co/logstash/logstash:5.5.1
+    volumes:
+    - ./tmp/logstash:/usr/share/logstash/pipeline
+    - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    networks:
+    - esnet
+
+# volumes:
+#   esdata1:
+#     driver: local
+#   esdata2:
+#     driver: local
+
+networks:
+  esnet:
