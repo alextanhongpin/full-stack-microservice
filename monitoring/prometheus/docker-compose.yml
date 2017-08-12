@@ -9,10 +9,12 @@ services:
     - ./prometheus.yml:/etc/prometheus/prometheus.yml
     - prometheus_data:/prometheus
     command: -config.file=/etc/prometheus/prometheus.yml
+
   client:
     image: alextanhongpin/go-prometheus-client:latest
     ports:
     - 8080:8080
+
   grafana:
     image: grafana/grafana
     # volumes:
@@ -23,6 +25,7 @@ services:
     - prometheus
     ports:
     - 3000:3000
+
   node_exporter:
     image: prom/node-exporter:latest
     ports:

@@ -75,6 +75,8 @@ routers:
       - kind: io.l5d.specificHost
         host: docker.for.mac.localhost
 
+telemetry:
+- kind: io.l5d.prometheus
 
 usage:
   orgId: linkerd-examples-consul
