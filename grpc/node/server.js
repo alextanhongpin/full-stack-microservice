@@ -2,30 +2,21 @@ const path = require('path')
 const grpc = require('grpc')
 const routeguide = grpc.load(path.join(__dirname, 'route.proto')).routeguide
 
-let features = []
-
 function checkFeature (point) {
-  console.log(features)
-  const existingFeature = features.filter((feature) => {
-    return feature.location.latitude === point.latitude && feature.location.longitude === point.longitude
-  })
-
-  const hasFeature = existingFeature.length
-  if (hasFeature) {
-    return existingFeature[0]
-  }
-
   const feature = {
     name: '',
     location: point
   }
-  features.push(feature)
   return feature
 }
 
 function getFeature (call, callback) {
   const point = call.request
   console.log('getFeature', point)
+  if (Math.random() < 0.5) {
+      // Fake error
+    return callback(new Error('Error getting point'))
+  }
   callback(null, checkFeature(call.request))
 }
 
@@ -33,15 +24,22 @@ function listFeatures (call) {
   const rectangle = call.request
   console.log('listFeatures:rectangle', rectangle)
 
-  const fakeFeature = {
-    name: '',
-    location: {
-      latitude: 409146138,
-      longitude: -746188906
-    }
-  }
   // Fake a for loop to stream data back
-  Array(10).fill(fakeFeature).forEach((feature) => {
+  Array(10).fill(0).map((_, i) => {
+    const feature = {
+      name: i.toString(),
+      location: {
+        latitude: 409146138,
+        longitude: -746188906
+      }
+    }
+    return feature
+  }).forEach((feature) => {
+    if (Math.random() < 0.5) {
+      console.log('hitting error')
+      // throw new Error('shit')
+      call.write(new Error('shit'))
+    }
     call.write(feature)
   })
 
@@ -59,6 +57,9 @@ function recordRoute (call, callback) {
   })
 
   call.on('end', () => {
+    if (Math.random() < 0.5) {
+      return callback(new Error('intended error'))
+    }
     callback(null, {
       point_count: pointCount,
       feature_count: featureCount,
@@ -71,6 +72,9 @@ function recordRoute (call, callback) {
 function routeChat (call) {
   call.on('data', (note) => {
     console.log('routeChat', note)
+    if (Math.random() < 0.5) {
+      call.write(new Error('intended error'))
+    }
     call.write(note)
   })
 

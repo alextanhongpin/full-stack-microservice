@@ -19,9 +19,11 @@ function runGetFeature () {
     console.log('got feature', feature)
   })
 }
+// runGetFeature()
 // Server-side streaming RPC. Client sends a requests to the server and gets
 // a stream to read a sequence of messages back
 function runListFeatures () {
+  let count = 0
   const rectangle = {
     lo: {
       latitude: 400000000,
@@ -34,6 +36,7 @@ function runListFeatures () {
   }
   const call = client.listFeatures(rectangle)
   call.on('data', (feature) => {
+    count += 1
     console.log('got list feature', feature)
   })
 
@@ -41,9 +44,11 @@ function runListFeatures () {
     if (error) {
       console.log('error list features', error)
     }
+    console.log('invocation time', count)
     console.log('got list features', done)
   })
 }
+// runListFeatures()
 
 // Client-side streaming RPC where client writes a sequence of messages
 // and sends them to the server. Once the client has finished writing the messages,
@@ -66,6 +71,7 @@ function runRecordRoute () {
   })
   call.end()
 }
+// runRecordRoute()
 
 // bidirectional streaming RPC where both sides send a sequence of messages
 // using read-write stream
