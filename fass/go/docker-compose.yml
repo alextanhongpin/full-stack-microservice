@@ -1,0 +1,8 @@
+version: '3'
+services:
+  function:
+    image: alextanhongpin/go-fass-v2
+    ports:
+    - 8080:8080
+    volumes:
+    - ./data:/tmp
