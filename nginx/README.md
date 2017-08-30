@@ -13,6 +13,9 @@ There will be three instances of the nodejs server and it will be load-balanced 
 ## References
 
 - The Github repo with the working example can be found [here](https://github.com/alextanhongpin/full-stack-microservice/tree/master/nginx)
+- [New Relic on Load Balancing 101](https://www.nginx.com/resources/glossary/load-balancing/)
+- [Nginx on What is Load Balancing?](https://www.nginx.com/resources/glossary/load-balancing/)
+
 
 ## Highlights
 
@@ -69,17 +72,19 @@ Note that we are using aliases for the web, which is `webs`. This allows you to 
 The `nginx.conf` is rather simple:
 
 ```conf
-worker_processes 4;
+worker_processes auto;
 
-events { worker_connections 1024; }
+events { 
+        worker_connections 1024; 
+}
 
 http {
 
         upstream node-app {
               least_conn;
-              server nginx_web_1:8080 weight=10 max_fails=3 fail_timeout=30s;
-              server nginx_web_2:8080 weight=10 max_fails=3 fail_timeout=30s;
-              server nginx_web_3:8080 weight=10 max_fails=3 fail_timeout=30s;
+              server nginx_web_1:8080 max_fails=3 fail_timeout=30s;
+              server nginx_web_2:8080 max_fails=3 fail_timeout=30s;
+              server nginx_web_3:8080 max_fails=3 fail_timeout=30s;
         }
          
         server {
@@ -96,13 +101,16 @@ http {
         }
 }
 ```
+The `worker processes` defines the number of worker processes. We set it to `auto` so that it will automatically detect the optimal number of worker proccesses which be based on the number of CPUs.
 
 The default `worker_connections` is set to 1024. To find out the right limit, type the command `ulimit -n` on your terminal.
 
 The `upstream` defines defines a group of servers. Servers can listen on different ports. In addition, servers listening on TCP and UNIX-domain sockets can be mixed.
 
-In this example, our request to the nodejs server will be distributed between the servers using a weighted round-robin balancing method.
+`least-conn` means we want our service to balance based on the network connection. Else it will default to round-robin.
+A new request is sent to the server with the fewest current connections to clients. The relative computing capacity of each server is factored into determining which one has the least connections.
 
+We set the proxy pass to `node-app`. When a request matches a location with a `proxy_pass` directive inside, the request is forwarded to the URL given by the directive.
 
 - Output
 
