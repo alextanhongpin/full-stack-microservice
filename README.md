@@ -90,4 +90,9 @@ The goal is to design a working microservice architecture with the following com
 - OpenID connect
 - Sharding/Clustering of storage
 - Vault
+- RASA NLU
+- Opentracing with GRPC
+- GRPC security with Go, nodejs, python
+- GRPC with graphql adapter
+- Finanz example
 
