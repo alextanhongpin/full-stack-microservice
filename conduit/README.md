@@ -93,7 +93,7 @@ Opening the default browser
 Starting to serve on 127.0.0.1:59488
 ```
 
-![assets/conduit.png](assets/conduit.png)
+![assets/conduit.png](../assets/conduit.png)
 
 ## Create Deployment
 
