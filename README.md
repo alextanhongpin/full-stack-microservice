@@ -28,32 +28,46 @@ The goal is to design a working microservice architecture with the following com
 
 - Kong
 - Tyk
-- Istio
-- Linkerd (since it does load balancing, circuit breaker)
 - express-gateway
 - API Umbrella
+
+## Service Mesh
+
+- Linkerd
+- Conduit
+- Istio
 
 ## Search
 
 - Elasticsearch
 - Solr
+- Bleeve
+- DNA Search
 
 ## Cache
 
-- Redis (also for rate-limiting)
+- Redis (also for rate-limiting, time-series analytics)
 - Memcached
 - Varnish
 - Zipnish
+
+## Time-Series Database
+
+- TimescaleDB
+- InfluxDB (cluster is only available in Enterprise version though)
+
 
 ## Tracing
 
 - OpenTracing
 - OpenZipkin
+- Jaeger
 
 ## Auth
 
 - OpenId Connect
 - OAuth2
+- Identity Server 4
 
 ## Secrets
 
@@ -64,7 +78,7 @@ The goal is to design a working microservice architecture with the following com
 
 - Kafka
 - Nats
-- grpc
+- gRPC
 - protobuff
 - Thrift
 - Avro
@@ -74,6 +88,15 @@ The goal is to design a working microservice architecture with the following com
 ## Documentation
 
 - Swagger
+
+## API Standards
+
+- JSON Schema
+- JSON API
+
+## Security
+
+- letsencrypt
 
 ### Others
 
@@ -95,4 +118,5 @@ The goal is to design a working microservice architecture with the following com
 - GRPC security with Go, nodejs, python
 - GRPC with graphql adapter
 - Finanz example
+- Create architecture diagram for all the different setups
 
