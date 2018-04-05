@@ -8,7 +8,7 @@ storage:
       /svc => /#/io.l5d.consul_ingress/.local;
     consul_egress: |
       /svc => /#/io.l5d.consul_egress/.local;
-      # /svc/api1 => /#/io.l5d.linker_to_consul/.local/api2 & 9 * /#/io.l5d.linker_to_consul/.local/api1;
+      # /svc/api1 => /#/io.l5d.consul_egress/.local/api2 & 9 * /#/io.l5d.consul_egress/.local/api1;
 
 namers:
 - kind: io.l5d.consul
