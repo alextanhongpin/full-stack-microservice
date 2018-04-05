@@ -4,22 +4,16 @@ admin:
 storage:
   kind: io.l5d.inMemory
   namespaces:
-    default: |
-      /grpc => /host;
-      /svc => /host/web;
-    client_to_linker: |
-      /svc => /#/io.l5d.client_to_linker/.local;
-    linker_to_consul: |
-      /svc => /#/io.l5d.linker_to_consul/.local;
-      /svc/api1 => /#/io.l5d.linker_to_consul/.local/api2 & 9 * /#/io.l5d.linker_to_consul/.local/api1;
-      # /host => /svc;
-      # /host/api1 => 1 * /host/api2 & 9 * /host/api1;
-      
+    consul_ingress: |
+      /svc => /#/io.l5d.consul_ingress/.local;
+    consul_egress: |
+      /svc => /#/io.l5d.consul_egress/.local;
+      # /svc/api1 => /#/io.l5d.linker_to_consul/.local/api2 & 9 * /#/io.l5d.linker_to_consul/.local/api1;
 
 namers:
 - kind: io.l5d.consul
-  prefix: /io.l5d.client_to_linker
-  host: docker.for.mac.localhost
+  prefix: /io.l5d.consul_ingress
+  host: consul
   port: 8500
   includeTag: false
   useHealthCheck: true
@@ -29,8 +23,8 @@ namers:
   preferServiceAddress: true
 
 - kind: io.l5d.consul
-  prefix: /io.l5d.linker_to_consul
-  host: docker.for.mac.localhost
+  prefix: /io.l5d.consul_egress
+  host: consul
   port: 8500
   includeTag: false
   useHealthCheck: true

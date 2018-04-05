@@ -12,24 +12,20 @@ routers:
         percentCanRetry: 0.1
   identifier:
     kind: io.l5d.header.token
-  # dtab: |
-  #   /svc => /#/io.l5d.consul/.local;
   servers:
   - port: 4140
     ip: 0.0.0.0
   interpreter:
-    # kind: default
     kind: io.l5d.namerd.http
     experimental: true
     dst: /$/inet/namerd/4180
-    namespace: client_to_linker
+    namespace: consul_ingress
     retry:
       baseSeconds: 5
       maxSeconds: 600
     transformers:
     - kind: io.l5d.port
       port: 4141
-
   client:
    requeueBudget:
     percentCanRetry: 5.0
@@ -37,22 +33,20 @@ routers:
     kind: ewma
     maxEffort: 10
     decayTimeMs: 15000
+  originator: true
 
 - label: incoming
   protocol: http
   servers:
   - port: 4141
     ip: 0.0.0.0
-  # dtab: |
-  #   /svc  => /#/io.l5d.linker_to_consul/.local;
   identifier:
     kind: io.l5d.header.token
   interpreter:
-    # kind: default
     kind: io.l5d.namerd.http
     experimental: true
     dst: /$/inet/namerd/4180
-    namespace: linker_to_consul
+    namespace: consul_egress
     retry:
       baseSeconds: 5
       maxSeconds: 600
