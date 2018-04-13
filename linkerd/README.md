@@ -6,6 +6,10 @@ The consul folder contains example on running linkerd with a local consul agent 
 
 Consul will be started with the other containers, coupled, probably not a good choice.
 
+## H2 (HTTP2) gRPC Load Balancing
+
+You can find the gRPC load balancing examples [here](https://github.com/alextanhongpin/linkerd-grpc)
+
 
 ### Conclusion
 
