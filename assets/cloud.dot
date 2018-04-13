@@ -1,0 +1,28 @@
+digraph G {
+  label = "Cloud Design Patterns"
+  node [shape = box]
+  layout="neato"
+  overlap = scale
+  splines = true 
+  ratio=fill
+
+  patt1 [label = Availability, style = filled]
+  patt2 [label = "Data Management", style = filled]
+  patt3 [label = "Design and Implementation", style = filled]
+  patt4 [label = Messaging, style = filled]
+  patt5 [label = "Management and Monitoring", style = filled]
+  patt6 [label = "Performance and Scalability", style = filled]
+  patt7 [label = Resilience, style = filled]
+  patt8 [label = Security, style = filled]
+
+  Microservices -> {patt1; patt2; patt3; patt4; patt5; patt6; patt7; patt8}
+
+  patt1 -> {"Health Endpoint Monitoring";"Queue-Based Load Leveling"; Throttling}
+  patt2 -> {"Cache Aside"; CQRS; "Event Sourcing"; "Index Table"; "Materialized View"; Sharding; "Static Content Hosting"; "Valet Key"}
+  patt3 -> {Ambassador; "Anti-Corruption Layer"; "Backends for Frontends"; CQRS; "Compute Resource Consolidation"; "External Configuration Store"; "Gateway Aggregation"; "Gateway Offloading"; "Gateway Routing"; "Leader Election"; "Pipes and Filter"; Sidecar; "Static Content Hosting"; Strangler}
+  patt4 -> {"Competing Consumers"; "Pipes and Filter"; "Priority Queue"; "Queue-Based Load Leveling"; "Scheduler Agent Supervisor"}
+  patt5 -> {Ambassador; "Anti-Corruption Layer"; "External Configuration Store"; "Gateway Aggregation"; "Gateway Offloading"; "Gateway Routing"; "Health Endpoint Monitoring"; Sidecar; Strangler}
+  patt6 -> {"Cache-Aside"; CQRS; "Event Sourcing"; "Index Table"; "Materialized View"; "Priority Queue"; "Queue-Based Load Leveling"; Sharding; "Static Content Hosting"; Throttling}
+  patt7 -> {Bulkhead; "Circuit Breaker"; "Compensating Transaction"; "Health Endpoint Monitoring"; "Leader Election"; "Queue-Based Load Leveling"; Retry; "Scheduler Agent Supervisor"}
+  patt8 -> {"Federated Identity"; Gatekeeper; "Valet Key"}
+}

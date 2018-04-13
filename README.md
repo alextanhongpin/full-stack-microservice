@@ -2,6 +2,8 @@
 
 The goal is to design a working microservice architecture with the following components:
 
+![out](assets/cloud.png)
+
 ## Infrastructure
 
 - Terraform
