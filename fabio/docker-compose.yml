@@ -2,38 +2,36 @@ version: '3'
 
 services:
   consul:
-    image: consul:latest
+    image: consul:1.0.6
     ports:
-    - 8500:8500
-    restart: on-failure
+      - 127.0.0.1:8500:8500
 
   registry:
-    image: gliderlabs/registrator:latest
-    command: -ip=docker.for.mac.localhost -cleanup consul://docker.for.mac.localhost:8500
-    #network_mode: host # Equivalent to --net=host
+    image: gliderlabs/registrator:v7
+    command: -cleanup -ip=docker.for.mac.localhost -deregister=always consul://consul:8500
     volumes:
-    - "/var/run/docker.sock:/tmp/docker.sock"
-    depends_on:
-    - consul
+      - /var/run/docker.sock:/tmp/docker.sock
 
   fabio:
-    image: magiconair/fabio:latest
+    image: fabiolb/fabio:1.5.8-go1.10
     ports:
-    - 9999:9999
-    - 9998:9998
-    depends_on:
-    - consul
+      - 127.0.0.1:9999:9999 # Load balancer endpoint
+      - 127.0.0.1:9998:9998 # Admin UI
     volumes:
-    - ./fabio.properties:/etc/fabio/fabio.properties
-    environment:
-    - SERVICE_9998_TAGS=urlprefix-/fabio
-
+      - $PWD/fabio.properties:/etc/fabio/fabio.properties
 
   web:
     image: tutum/hello-world
     ports:
-    - 80
+      - 127.0.0.1::80
     environment:
-    - SERVICE_TAGS=urlprefix-/
-    - SERVICE_CHECK_HTTP=/
+      - SERVICE_TAGS=urlprefix-web/
+      - SERVICE_CHECK_HTTP=/
 
+  svc1:
+    image: alextanhongpin/linkerd-web
+    ports:
+      - 127.0.0.1::3000
+    environment:
+      - SERVICE_TAGS=urlprefix-svc1/
+      - SERVICE_CHECK_HTTP=/ # The endpoint for the health checkpoint
